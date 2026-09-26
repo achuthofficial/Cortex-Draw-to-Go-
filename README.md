@@ -178,3 +178,40 @@ Create realistic, internally consistent data where IDs link across modules:
 - Clicking a drawing overlay highlights its table row, and vice versa.
 - Works in light and dark mode; no layout breaks at 1280 px.
 - No console errors; TypeScript strict mode passes.
+
+---
+
+## Running the prototype
+
+The prototype described above lives in this repository.
+
+```bash
+npm install
+npm run dev        # http://localhost:5173
+npm run typecheck  # TypeScript strict
+npm run build      # static build in dist/ (relative paths, HashRouter: ready for Tauri/Electron)
+```
+
+All data is static mock data in `src/data/`, held in memory by Zustand (`src/store/`). Reloading the page resets the demo.
+
+### Demo path (about 2 minutes)
+
+1. Press **Ctrl+N**, click **Use sample drawing**, then **Create and extract**. Watch the staged AI extraction.
+2. The Quote Workspace opens. Click **Accept all high-confidence**, then press **J** once and hold **A** to accept the rest of the review queue. When everything is reviewed the RFQ moves to Costing.
+3. Press **3** (Process plan) to reorder operations, **4** (Costing) to move the margin slider and watch prices recalculate. **Ctrl+Z** undoes the last edit.
+4. Press **5** (Quote preview), then **Mark as won**. A sales order, a work order (placed on the Production schedule) and a draft inspection plan (in Quality) are created.
+
+Other things to try: hover or click a box on the drawing to highlight its table row (and the reverse), **Balloons** on the drawing toolbar, **Ctrl+J** for the Copilot ("Why is this quote 12% higher than the last one?"), **Ctrl+K** for the command palette, **?** for all shortcuts, Production → **Preview/Apply** on the VMC 2 reschedule, drag jobs on the Gantt, drag CAPA cards, Operator mode from any machine tile, and Settings → Prototype → **Simulate data errors** to see error states.
+
+### Project layout
+
+| Path | Contents |
+| --- | --- |
+| `src/app` | Shell (sidebar, top bar, workspace tabs, status bar), routes, command palette, shortcuts |
+| `src/features` | One folder per module: dashboard, rfq, quote-workspace, plm, orders, inventory, production, quality, crm, reports, settings, copilot |
+| `src/components/ui` | shadcn/ui components (Radix based) |
+| `src/components/common` | DataTable, StatusBadge, ConfidenceBadge, FeatureControlFrame, DrawingViewer, GanttChart, KpiCard, MoneyText |
+| `src/data` | Typed mock data; `drawings/` holds the three fully extracted drawings (shaft, flange, bracket) |
+| `src/lib` | INR/mm/date formatters, costing engine, drawing layout engine, `platform.ts` adapter for file and PDF I/O |
+
+The drawings are generated from the same annotation data as the extraction tables (`src/lib/drawing.ts`), so overlay boxes always line up with the SVG.
